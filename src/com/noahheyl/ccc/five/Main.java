@@ -11,37 +11,63 @@ public class Main {
         int n = Integer.parseInt(garbage[0]);
         long t = Long.parseLong(garbage[1]);
         String[] stateGarbage = sc.nextLine().split("");
-        ArrayList<Boolean> state = new ArrayList<Boolean>(stateGarbage.length);
+        boolean[] state = new boolean[stateGarbage.length];
+        boolean[] state2 = new boolean[stateGarbage.length];
         for(int i = 0; i < stateGarbage.length; i++){
-            state.add(stateGarbage[i].equals("1"));
+            state[i] = stateGarbage[i].equals("1");
         }
+        boolean isTwo = false;
+        for(long i = 0; i < t; i++){
 
-        for(int i = 0; i < t; i++){
-            ArrayList<Boolean> newState = new ArrayList<Boolean>(state.size());
-            newState.add(state.get(state.size() - 1) ^ state.get(1));
-            for(int j = 1; j < state.size()-1; j++){
-                newState.add(state.get(j-1) ^ state.get(j+1));
+            if(!isTwo){
+                //System.out.println("shift 2");
+                state2[0] = state[state.length-1] ^ state[1];
+                for(int j = 1; j < state.length-1; j++){
+                    state2[j] = state[j-1] ^ state[j+1];
+                }
+                state2[state.length-1] = state[state.length-2] ^ state[0];
+                isTwo = true;
             }
-            newState.add(state.get(state.size()-2) ^ state.get(0));
+            else{
+                //System.out.println("shift 1");
+                state[0] = state2[state.length-1] ^ state2[1];
+                for(int j = 1; j < state2.length-1; j++){
+                    state[j] = state2[j-1] ^ state2[j+1];
+                }
+                state[state.length-1] = state2[state.length-2] ^ state2[0];
+                isTwo = false;
+            }
 
-            state = newState;
             // If I was given time to test against the website, I would have checked if this helped performance
             //
             boolean dead = true;
-            for(boolean check : newState){
+            for(boolean check : (isTwo ? state2 : state)){
                 if(check){
                     dead = false;
+
                 }
             }
-            if(dead) break;
+            if(dead){
+                //System.out.println("dead");
+                break;
+            }
             //
 
         }
-        String buffer = "";
-        for(boolean i : state){
-            buffer += (i ? "1" : "0");
+        if(!isTwo){
+            //System.out.println("print 1");
+            for(boolean i : state){
+                System.out.print(i ? "1" : "0");
+            }
         }
-        System.out.println(buffer);
+        else{
+            //System.out.println("print 2");
+            for(boolean i : state2){
+                System.out.print(i ? "1" : "0");
+            }
+        }
+
+        System.out.println();
     }
     public static ArrayList<Boolean> cloneList(ArrayList<Boolean> list){
         ArrayList<Boolean> newList = new ArrayList<Boolean>();

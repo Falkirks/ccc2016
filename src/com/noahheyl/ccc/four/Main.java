@@ -18,7 +18,7 @@ public class Main {
 
     }
     static public int findBestPossibleMove(ArrayList<Integer> balls){
-        ArrayList<Integer> results = new ArrayList<Integer>();
+        int bestResult = -1;
         for(int i = 0; i < balls.size(); i++){
             //System.out.println(i);
             if(i-2 > 0 && balls.get(i-2).equals(balls.get(i))){
@@ -27,21 +27,24 @@ public class Main {
                 clone.set(i, balls.get(i) + balls.get(i-1) + balls.get(i-2));
                 clone.remove(i-1);
                 clone.remove(i-1); //We have shifted left
-                results.add(findBestPossibleMove(clone));
+                int j = findBestPossibleMove(clone);
+                if(j > bestResult) bestResult = j;
             }
             if(i-1 > 0 && balls.get(i-1).equals(balls.get(i))){
                 //System.out.println("-1 >>");
                 ArrayList<Integer> clone = cloneList(balls);
                 clone.set(i, balls.get(i) + balls.get(i-1));
                 clone.remove(i-1);
-                results.add(findBestPossibleMove(clone));
+                int j = findBestPossibleMove(clone);
+                if(j > bestResult) bestResult = j;
             }
             if(i+1 < balls.size() && balls.get(i+1).equals(balls.get(i))){
                 //System.out.println("+1 >>");
                 ArrayList<Integer> clone = cloneList(balls);
                 clone.set(i, balls.get(i) + balls.get(i+1));
                 clone.remove(i+1);
-                results.add(findBestPossibleMove(clone));
+                int j = findBestPossibleMove(clone);
+                if(j > bestResult) bestResult = j;
             }
             if(i+2 < balls.size() && balls.get(i+2).equals(balls.get(i))){
                 //System.out.println("+2 >>");
@@ -49,31 +52,15 @@ public class Main {
                 clone.set(i, balls.get(i) + balls.get(i+2) + balls.get(i+1));
                 clone.remove(i+2);
                 clone.remove(i+1);
-                results.add(findBestPossibleMove(clone));
+                int j = findBestPossibleMove(clone);
+                if(j > bestResult) bestResult = j;
             }
         }
-        if(results.size() == 0){
+        if(bestResult == -1){
             balls.sort(new IntCompare());
             return balls.get(balls.size()-1);
         }
-        results.sort(new IntCompare());
-        return results.get(results.size()-1);
-    }
-    public static Integer[] moveWillBecome(int index, ArrayList<Integer> balls){
-        Integer[] out = new Integer[]{-1, -1, -1, -1};
-        if(index - 2 > 0 && balls.get(index-2).equals(balls.get(index))){
-            out[0] = balls.get(index) + balls.get(index-1) + balls.get(index-2);
-        }
-        if(index - 1 > 0 && balls.get(index-1).equals(balls.get(index))){
-            out[1] = balls.get(index) + balls.get(index-1);
-        }
-        if(index + 1 < balls.size() && balls.get(index+1).equals(balls.get(index))){
-            out[2] = balls.get(index) + balls.get(index+1);
-        }
-        if(index + 2 < balls.size() && balls.get(index+2).equals(balls.get(index))){
-            out[3] = balls.get(index) + balls.get(index+1) + balls.get(index+2);
-        }
-        return out;
+        return bestResult;
     }
     static public class IntCompare implements Comparator<Integer> {
         @Override
@@ -82,7 +69,7 @@ public class Main {
         }
     }
     public static ArrayList<Integer> cloneList(ArrayList<Integer> list){
-        ArrayList<Integer> newList = new ArrayList<Integer>();
+        ArrayList<Integer> newList = new ArrayList<Integer>(list.size());
         for(Integer i : list){
             int newInt = i;
             newList.add(newInt);
